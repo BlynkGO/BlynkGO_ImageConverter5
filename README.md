@@ -16,7 +16,7 @@ https://github.com/BlynkGO/BlynkGO_ImageConverter5/releases/download/v5.0.0/Blyn
 - หากรูปไหน ต้องการแปลงแบบโปร่งใสด้วย ให้ ติ๊กเลือก `Include transparency (for PNG images)`
 - กดปุ่ม `Convert!`  รูปที่ได้ จะนามสกุล .c ให้ และอยู่ในโฟลเดอร์ ภายใต้ src ให้อัตโนมัติ
 
-## ตัวอย่างโคด
+## ตัวอย่างโคด (1)
 
 หากรูปที่แปลงได้ มีชื่อว่า img_mypic.c และอยู่ ในโฟลเดอร์ภายใต้ src ของโปรเจคแล้ว
 
@@ -38,3 +38,55 @@ void loop(){
   BlynkGO.update();
 }
 ```
+
+## ตัวอย่างโคด (2)
+
+หากรูปที่แปลงได้ มีชื่อว่า img_mypic.c และอยู่ ในโฟลเดอร์ภายใต้ src ของโปรเจคแล้ว
+
+```c
+#include <BlynkGOv5.h>
+
+IMAGE_DECLARE(img_mypic);   // ประกาศทั่วระบบกราฟิก ว่ามี ทรัพยากรรูป C array เข้ามาเพิ่ม
+
+GImage mypic;               // ประกาศวิตเจ็ต GImage โดย วิตเจ็ตมีชื่อว่า mypic
+
+void setup(){
+  Serial.begin(9600); Serial.println();
+  BlynkGO.begin();
+
+  mypic = img_mypic;       // กำหนดรูปที่จะใช้ให้วิตเจ็ต ด้วย =
+}
+
+void loop(){
+  BlynkGO.update();
+}
+```
+
+
+## ตัวอย่างโคด (3)
+
+หากรูปที่แปลงได้ มีชื่อว่า img_mypic.c และอยู่ ในโฟลเดอร์ภายใต้ src ของโปรเจคแล้ว
+
+```c
+#include <BlynkGOv5.h>
+
+IMAGE_DECLARE(img_mypic);       // ประกาศทั่วระบบกราฟิก ว่ามี ทรัพยากรรูป C array เข้ามาเพิ่ม
+
+GImageButton mybutton(img_mypic);  // ประกาศวิตเจ็ตปุ่มรูปภาพ GImageButton โดย วิตเจ็ตมีชื่อว่า mybutton
+
+void setup(){
+  Serial.begin(9600); Serial.println();
+  BlynkGO.begin();
+
+  mybutton.onClicked([](GWIDGET){
+    Serial.println("Clicked");
+  });
+}
+
+void loop(){
+  BlynkGO.update();
+}
+```
+
+
+
