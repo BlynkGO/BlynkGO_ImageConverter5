@@ -88,5 +88,33 @@ void loop(){
 }
 ```
 
+## ตัวอย่างโคด (4)
+
+หากรูปที่แปลงได้ มีชื่อว่า img_button_released.c  และ img_button_pressed.c และอยู่ ในโฟลเดอร์ภายใต้ src ของโปรเจคแล้ว
+
+```c
+#include <BlynkGOv5.h>
+
+IMAGE_DECLARE(img_button_released);       // ประกาศทั่วระบบกราฟิก ว่ามี ทรัพยากรรูป C array เข้ามาเพิ่ม
+IMAGE_DECLARE(img_button_pressed);        // ประกาศทั่วระบบกราฟิก ว่ามี ทรัพยากรรูป C array เข้ามาเพิ่ม
+
+// ประกาศวิตเจ็ตปุ่มรูปภาพ GImageButton โดย วิตเจ็ตมีชื่อว่า mybutton
+// โดยใช้รูป 2 รูป รูปนึงเป็นตอนปุ่มปล่อย อีกรูปเป็นตอนปุ่มถูกกด
+GImageButton mybutton(img_button_released, img_button_pressed);  
+
+void setup(){
+  Serial.begin(9600); Serial.println();
+  BlynkGO.begin();
+
+  mybutton.onClicked([](GWIDGET){
+    Serial.println("Clicked");
+  });
+}
+
+void loop(){
+  BlynkGO.update();
+}
+```
+
 
 
