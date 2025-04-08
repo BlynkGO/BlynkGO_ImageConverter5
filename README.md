@@ -70,9 +70,9 @@ void loop(){
 ```c
 #include <BlynkGOv5.h>
 
-IMAGE_DECLARE(img_mypic);       // ประกาศทั่วระบบกราฟิก ว่ามี ทรัพยากรรูป C array เข้ามาเพิ่ม
+IMAGE_DECLARE(img_mybutton);          // ประกาศทั่วระบบกราฟิก ว่ามี ทรัพยากรรูป C array เข้ามาเพิ่ม
 
-GImageButton mybutton(img_mypic);  // ประกาศวิตเจ็ตปุ่มรูปภาพ GImageButton โดย วิตเจ็ตมีชื่อว่า mybutton
+GImageButton mybutton(img_mybutton);  // ประกาศวิตเจ็ตปุ่มรูปภาพ GImageButton โดย วิตเจ็ตมีชื่อว่า mybutton โดยใช้รูป img_mybutton
 
 void setup(){
   Serial.begin(9600); Serial.println();
@@ -95,8 +95,8 @@ void loop(){
 ```c
 #include <BlynkGOv5.h>
 
-IMAGE_DECLARE(img_button_released);       // ประกาศทั่วระบบกราฟิก ว่ามี ทรัพยากรรูป C array เข้ามาเพิ่ม
-IMAGE_DECLARE(img_button_pressed);        // ประกาศทั่วระบบกราฟิก ว่ามี ทรัพยากรรูป C array เข้ามาเพิ่ม
+IMAGE_DECLARE(img_button_released);       // ประกาศทั่วระบบกราฟิก ว่ามี ทรัพยากรรูป C array เข้ามาเพิ่ม สำหรับใช้เป็นปุ่มขณะปล่อย
+IMAGE_DECLARE(img_button_pressed);        // ประกาศทั่วระบบกราฟิก ว่ามี ทรัพยากรรูป C array เข้ามาเพิ่ม สำหรับใช้เป็นปุ่มขณะกด
 
 // ประกาศวิตเจ็ตปุ่มรูปภาพ GImageButton โดย วิตเจ็ตมีชื่อว่า mybutton
 // โดยใช้รูป 2 รูป รูปนึงเป็นตอนปุ่มปล่อย อีกรูปเป็นตอนปุ่มถูกกด
@@ -115,6 +115,39 @@ void loop(){
   BlynkGO.update();
 }
 ```
+  
+## ตัวอย่างโคด (5)
+
+หากรูปที่แปลงได้ มีชื่อว่า img_switch_off.c  และ img_switch_on.c และอยู่ ในโฟลเดอร์ภายใต้ src ของโปรเจคแล้ว
+
+```c
+#include <BlynkGOv5.h>
+
+IMAGE_DECLARE(img_switch_off);       // ประกาศทั่วระบบกราฟิก ว่ามี ทรัพยากรรูป C array เข้ามาเพิ่ม สำหรับใช้เป็นปุ่มขณะ OFF
+IMAGE_DECLARE(img_switch_on);        // ประกาศทั่วระบบกราฟิก ว่ามี ทรัพยากรรูป C array เข้ามาเพิ่ม สำหรับใช้เป็นปุ่มขณะ ON
+
+// ประกาศวิตเจ็ตปุ่มรูปภาพ GImageButton โดย วิตเจ็ตมีชื่อว่า myswitch
+// ทำเป็นสวิตซ์ กดเปิดปิด โดยใช้รูป 2 รูป รูปนึงเป็นตอนปุ่ม OFF อีกรูปเป็นตอนปุ่ม ON
+GImageButton myswitch(BUTTON_SWITCH, img_switch_off, img_switch_on);  
+
+void setup(){
+  Serial.begin(9600); Serial.println();
+  BlynkGO.begin();
+
+  myswitch.onValueChanged([](GWIDGET){
+    if(myswitch.isON()){   // เช็คสถานะว่า สวิตซ์ มีสถานะ ON อยู่ หรือไม่
+       Serial.println("[Switch] ON");
+    }else{
+       Serial.println("[Switch] OFF");
+    }
+  });
+}
+
+void loop(){
+  BlynkGO.update();
+}
+```
+
 
 
 
