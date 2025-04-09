@@ -20,7 +20,7 @@ https://github.com/BlynkGO/BlynkGO_ImageConverter5/releases/download/v5.0.1/Blyn
   และให้มาแปลงโดย ติ๊กเลือก `For masking, supports images with white areas and transparency (e.g., PNG)`  
 - กดปุ่ม `Convert!`  รูปที่ได้ จะนามสกุล .c ให้ และอยู่ในโฟลเดอร์ ภายใต้ src ให้อัตโนมัติ
 
-## ตัวอย่างโคด (1)
+## ตัวอย่างโคด (1) : วิตเจ็ตรูป GImage 
 
 หากรูปที่แปลงได้ มีชื่อว่า img_mypic.c และอยู่ ในโฟลเดอร์ภายใต้ src ของโปรเจคแล้ว
 
@@ -43,7 +43,7 @@ void loop(){
 }
 ```
 
-## ตัวอย่างโคด (2)
+## ตัวอย่างโคด (2) : วิตเจ็ตรูป GImage กำหนดรูปด้วย = 
 
 หากรูปที่แปลงได้ มีชื่อว่า img_mypic.c และอยู่ ในโฟลเดอร์ภายใต้ src ของโปรเจคแล้ว
 
@@ -67,7 +67,7 @@ void loop(){
 ```
 
 
-## ตัวอย่างโคด (3)
+## ตัวอย่างโคด (3)  : วิตเจ็ตปุ่มด้วยรูป GImageButton 
 
 หากรูปที่แปลงได้ มีชื่อว่า img_mypic.c และอยู่ ในโฟลเดอร์ภายใต้ src ของโปรเจคแล้ว
 
@@ -92,7 +92,7 @@ void loop(){
 }
 ```
 
-## ตัวอย่างโคด (4)
+## ตัวอย่างโคด (4)  : วิตเจ็ตปุ่มด้วยรูป GImageButton แบบใช้ 2 รูป
 
 หากรูปที่แปลงได้ มีชื่อว่า img_button_released.c  และ img_button_pressed.c และอยู่ ในโฟลเดอร์ภายใต้ src ของโปรเจคแล้ว
 
@@ -120,7 +120,7 @@ void loop(){
 }
 ```
   
-## ตัวอย่างโคด (5)
+## ตัวอย่างโคด (5) : วิตเจ็ตปุ่มด้วยรูป GImageButton มาทำเป็น switch เปิดปิด แบบใช้ 2 รูป
 
 หากรูปที่แปลงได้ มีชื่อว่า img_switch_off.c  และ img_switch_on.c และอยู่ ในโฟลเดอร์ภายใต้ src ของโปรเจคแล้ว
 
@@ -151,7 +151,33 @@ void loop(){
   BlynkGO.update();
 }
 ```
+  
+## ตัวอย่างโคด (6) : วิตเจ็ตมาสก์ GMask ทำการมาสก์วิตเจ็ตลูกๆด้วยรูปทรงที่ต้องการ
 
+ให้สร้างรูป PNG ที่มีพื้นที่สีขาว ตามรูปทรงที่ต้องการ และส่วนอื่นๆ เป็นพื้นที่โปร่งใส  
+แล้วนำมาแปลงโดยเลือกติ๊ก `For masking ...`  
+หากได้รูปที่ไว้มาส์ก นี้ ไฟล์ img_bar_mask.c ออกมา และอยู่ภายใต้โฟลเดอร์ src แล้ว  
 
+![มาสก์](GMask_example.jpg)
+
+```c
+#include <BlynkGOv5.h>
+
+IMAGE_DECLARE(img_bar_mask);
+
+GMask bar_mask(img_bar_mask);
+  GBar bar(bar_mask);           // bar จะถูกมาสก์ให้เห็นเหลือตามรูปทรงที่ต้องการ
+
+void setup(){
+  Serial.begin(9600); Serial.println();
+  BlynkGO.begin();
+
+  bar = 80;
+}
+
+void loop(){
+  BlynkGO.update();
+}
+```
 
 
