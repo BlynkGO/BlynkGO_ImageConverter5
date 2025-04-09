@@ -1,6 +1,6 @@
-/* Windows App : สำหรับแปลงรูป jpg png bmp เป็น .c ไฟล์ แบบโปร่งใสได้ */
-
 #include <BlynkGOv5.h>
+
+#define BG_IMGCONV_VERSION        "v5.0.1"
 
 IMAGE_DECLARE(img_blynkgo);
 
@@ -12,8 +12,8 @@ FONT_DECLARE(google_icon_trend_20)
 
 GContainer cont_frame;
   GContainer cont_title(cont_frame);
-    GLabel lb_title("BlynkGO Image Converter v5.0", cont_title);
-    GLabel lb_sub_title("Convert images to C array / Bin format",cont_title);
+    GLabel lb_title("BlynkGO Image Converter " BG_IMGCONV_VERSION, cont_title);
+    GLabel lb_sub_title("Convert images to C array format",cont_title);
     GContainer cont_logo(cont_title);
       GImage logo(img_blynkgo, cont_logo);
   GContainer cont_body(cont_frame);
@@ -25,17 +25,21 @@ GContainer cont_frame;
       GLabel lb_output_c_filename("Output C Filename", cont_conversion);
       GTextArea ta_output_c_filename(cont_conversion);
       GCheckbox cb_transparent_option(cont_conversion);
+      GCheckbox cb_mask_image_option(cont_conversion);
+
+    GLabel  lb_bg_imgconv_status(cont_body);
 
     GButton btn_convert(BUTTON_PUSH, "Convert!", cont_body);
       GLabel lb_symbol_convert(SYMBOL_RESET_IMAGE, btn_convert);
     
 
 void split_path(const String& full_path, String& folder, String& filename_no_ext, String& filename_with_ext);
-void system_run_imgconv(const String& src_full_path, const String& dest_filename_no_ext, String dest_output_folder=".", bool is_transparent=false);
+void system_run_imgconv(const String& src_full_path, const String& dest_filename_no_ext, String dest_output_folder=".", bool is_transparent=false, bool is_for_masking = false);
+
 
 void setup(){
   Serial.begin(9600); Serial.println();
-  BlynkGO.window_title("BlynkGO ImgConv V5.0");
+  BlynkGO.window_title("BlynkGO Image Converter " BG_IMGCONV_VERSION);
 
   BlynkGO.begin();
   BlynkGO.fillScreen(TFT_WHITE);
@@ -110,7 +114,7 @@ void setup(){
       cont_conversion.color(TFT_PALETTE_LIGHTEN(TFT_PALETTE_GRAY,2));//  TFT_COLOR_HEX(0xf9fafb));
       cont_conversion.radius(10);
       cont_conversion.grid_cell(0,1,2,1, GRID_ALIGN_STRETCH, GRID_ALIGN_START);
-      cont_conversion.GRID_CELL( GRID_COL { GRID_FR(1)}, GRID_ROW{GRID_CONTENT,GRID_CONTENT,40,8, GRID_CONTENT});
+      cont_conversion.GRID_CELL( GRID_COL { GRID_FR(1)}, GRID_ROW{GRID_CONTENT,GRID_CONTENT,40,8, GRID_CONTENT, GRID_CONTENT});
       cont_conversion.padding(10,10,10,10,0);
         lb_conversion_options.grid_cell(0,0);
         lb_conversion_options.font(prasanmit_25, TFT_BLACK);
@@ -123,10 +127,30 @@ void setup(){
         ta_output_c_filename.placeholder("ตย. img_mypic");
         ta_output_c_filename.default_keyboard(false);
         ta_output_c_filename.cursor_show(true);
+
         cb_transparent_option.grid_cell(0,4);
         cb_transparent_option.font(prasanmit_20, TFT_COLOR_HSV(0,0,25));
         cb_transparent_option.bg_opa(0);
         cb_transparent_option = "Include transparency (for PNG images)";
+        cb_transparent_option.onValueChanged([](GWIDGET){
+          if(cb_transparent_option.isON()) {
+            cb_mask_image_option.OFF();
+          }
+        });
+
+        cb_mask_image_option.grid_cell(0,5);
+        cb_mask_image_option.font(prasanmit_20, TFT_COLOR_HSV(0,0,25));
+        cb_mask_image_option.bg_opa(0);
+        cb_mask_image_option = "For masking, supports images with white areas and transparency (e.g., PNG)";
+        cb_mask_image_option.margin_top(10);
+        cb_mask_image_option.onValueChanged([](GWIDGET){
+          if(cb_mask_image_option.isON()) {
+            cb_transparent_option.OFF();
+          }
+        });
+
+      lb_bg_imgconv_status.grid_cell(0,3,2,1, GRID_ALIGN_START, GRID_ALIGN_CENTER);
+      lb_bg_imgconv_status.show(false);
 
       btn_convert.grid_cell(0,3,2,1, GRID_ALIGN_END, GRID_ALIGN_CENTER);
       btn_convert.color(TFT_COLOR_HEX(0x2563eb));
@@ -139,11 +163,14 @@ void setup(){
         String full_path = ta_src_path.toString();
         String dest_filename_no_ext = ta_output_c_filename.toString();
 
+        bool is_for_masking = cb_mask_image_option.isON();
+        bool is_transparent = cb_transparent_option.isON();
+
         String folder, filename_no_ext, filename_with_ext;
         split_path(full_path, folder, filename_no_ext, filename_with_ext);
 
         if( dest_filename_no_ext == "") {
-          dest_filename_no_ext = String("img_") + filename_no_ext;
+          dest_filename_no_ext = String( is_for_masking? "msk_" : "img_") + filename_no_ext;
         }
         dest_filename_no_ext.replace(".c", "");
         dest_filename_no_ext.replace(" ", "_");
@@ -152,15 +179,17 @@ void setup(){
         String dest_filename_with_ext = dest_filename_no_ext + ".c";
         String dest_path = folder + "/" +  dest_filename_with_ext;
       
-        Serial.println("Folder: " + folder);
-        Serial.println("Filename (no ext): " + filename_no_ext);
-        Serial.println("Filename (with ext): " + filename_with_ext);
-        Serial.println("Output Name : " + dest_filename_no_ext);
-        Serial.println("Output : " + dest_path);
+        // Serial.println("Folder: " + folder);
+        // Serial.println("Filename (no ext): " + filename_no_ext);
+        // Serial.println("Filename (with ext): " + filename_with_ext);
+        // Serial.println("Output Name : " + dest_filename_no_ext);
+        // Serial.println("Output : " + dest_path);
 
-        bool is_transparent = cb_transparent_option.isON();
-
-        system_run_imgconv(full_path, dest_filename_no_ext, folder, is_transparent);
+        if(is_for_masking){
+          system_run_imgconv(full_path, dest_filename_no_ext, folder, false, is_for_masking);
+        }else{
+          system_run_imgconv(full_path, dest_filename_no_ext, folder, is_transparent, false);
+        }
 
       });
 
@@ -197,7 +226,7 @@ void split_path(const String& full_path, String& folder, String& filename_no_ext
   }
 }
 
-void system_run_imgconv(const String& src_full_path, const String& dest_filename_no_ext, String dest_output_folder, bool is_transparent) {
+void system_run_imgconv(const String& src_full_path, const String& dest_filename_no_ext, String dest_output_folder, bool is_transparent, bool is_for_masking) {
 
   std::string src     = src_full_path.c_str();
   std::string dest    = dest_filename_no_ext.c_str();
@@ -205,7 +234,32 @@ void system_run_imgconv(const String& src_full_path, const String& dest_filename
 
   // สร้างคำสั่งที่ต้องการจะเรียก
   std::string command = "imgconv.exe \"" + src + "\" -o \"" + dest + "\" -of \"" + folder + "\"";
-  if (is_transparent) command += " -t";
-  system_silently(command);
+  if ( is_for_masking) {
+    command += " -cf A8";
+  }else {
+    if (is_transparent) command += " -t";
+  }
+
+  // String command = "bgimage.exe \"" + src_full_path + "\" --ofmt C --cf RGB565 --output . --outfile \"" + dest_filename_no_ext + "\"";
+  // Serial.println(command);
+  
+  static SoftTimer timer;
+  std::string ret = system_silently(command);
+  if(ret.find("Done")) {
+    lb_bg_imgconv_status = "converted!";
+    lb_bg_imgconv_status.color(TFT_PALETTE(TFT_PALETTE_BLUE));
+    lb_bg_imgconv_status.show(true);
+    timer.delay(5000,[](){
+      lb_bg_imgconv_status.show(false);
+    });
+  }else{
+    lb_bg_imgconv_status = "can't convert!";
+    lb_bg_imgconv_status.color(TFT_PALETTE(TFT_PALETTE_RED));
+    lb_bg_imgconv_status.show(true);
+    timer.delay(5000,[](){
+      lb_bg_imgconv_status.show(false);
+    });
+
+  }
 }
 

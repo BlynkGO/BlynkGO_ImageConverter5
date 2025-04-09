@@ -7,22 +7,21 @@ import argparse
 import os
 import sys
 
-IMGCONV_VERSION = "V5.0.0"
+IMGCONV_VERSION = "V5.0.1"
 
 def main():
     # กำหนด parser เพื่อรับพารามิเตอร์
     parser = argparse.ArgumentParser(prog="imgconv", formatter_class=argparse.RawTextHelpFormatter,
                                      description="BlynkGO ImgConverter " + IMGCONV_VERSION + "\n"
-                                                 "===============================\n"
-                                                 "  Convert images with BlynkGO ImgConverter\n\n\n"
-                                                 "\n\n\n")
+                                                 "===============================\n",
+                                     epilog="Example usage:\n  imgconv -t -cf RGB565 input.png")
 
     # เพิ่มพารามิเตอร์ -t
     parser.add_argument("-t",  action="store_true", help="Convert with transparency")
 
     # เพิ่มพารามิเตอร์ -cf
     parser.add_argument("-cf",  choices=["L8", "I1", "I2", "I4", "I8", "A1", "A2", "A4", "A8", "ARGB8888", "XRGB8888", "RGB565", "RGB565A8", "RGB888", "TRUECOLOR", "TRUECOLOR_ALPHA", "AUTO"],
-                        help="Color format for the output image\n\n\n")
+                        help="Color format for the output image")
 
     # เพิ่มพารามิเตอร์ -o
     parser.add_argument('-o', type=str, help='Output file name')
