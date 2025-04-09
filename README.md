@@ -15,6 +15,9 @@ https://github.com/BlynkGO/BlynkGO_ImageConverter5/releases/download/v5.0.1/Blyn
 - กดปุ่ม `Select File` เพื่อเลือกรูปที่ต้องการแปลง (JPG, PNG, BMP)
 - ตั้งชื่อที่จะแปลง ในช่อง `Output C Filename` โดยไม่ต้องใส่ .c
 - หากรูปไหน ต้องการแปลงแบบโปร่งใสด้วย ให้ ติ๊กเลือก `Include transparency (for PNG images)`
+- หากรูปที่ไว้สำหรับทำ mask วิตเจ็ต เพื่อให้วิตเจ็ตที่ถูก mask แสดงเฉพาะตามรูปทรงที่ต้องการ  
+  ให้สร้างรูป PNG ที่มีพื้นที่สีขาวที่มีตามรูปทรงที่ต้องการ แล้วให้ส่วนอื่นๆ เป็นโปร่งใส  
+  และให้มาแปลงโดย ติ๊กเลือก `For masking, supports images with white areas and transparency (e.g., PNG)`  
 - กดปุ่ม `Convert!`  รูปที่ได้ จะนามสกุล .c ให้ และอยู่ในโฟลเดอร์ ภายใต้ src ให้อัตโนมัติ
 
 ## ตัวอย่างโคด (1)
