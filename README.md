@@ -158,8 +158,6 @@ void loop(){
 แล้วนำมาแปลงโดยเลือกติ๊ก `For masking ...`  
 หากได้รูปที่ไว้มาส์ก นี้ ไฟล์ img_bar_mask.c ออกมา และอยู่ภายใต้โฟลเดอร์ src แล้ว  
 
-![มาสก์](GMask_example.jpg)
-
 ```c
 #include <BlynkGOv5.h>
 
@@ -179,5 +177,8 @@ void loop(){
   BlynkGO.update();
 }
 ```
+  
+![มาสก์](GMask_example.jpg)  
+  
 
 
